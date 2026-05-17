@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Luas Lahan Konsesi 13 Perusahaan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Bitter:wght@400;600;700&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: transparent;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+    }
+
+    .embed-container {
+      width: 436.5px;
+      background: #0d1a0f;
+      font-family: 'Source Sans 3', sans-serif;
+      color: #e8f0e9;
+      padding: 1.75rem 1.25rem 1.5rem;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    header h1 {
+      font-family: 'Bitter', Georgia, serif;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #a8dfb8;
+      letter-spacing: -0.3px;
+      line-height: 1.3;
+      margin-bottom: 0.3rem;
+    }
+
+    header p {
+      font-size: 0.75rem;
+      color: #6b8f72;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: center;
+      gap: 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .stat { text-align: center; }
+
+    .stat-value {
+      font-family: 'Bitter', serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #a8dfb8;
+    }
+
+    .stat-label {
+      font-size: 0.65rem;
+      color: #5a7a61;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 2px;
+    }
+
+    .divider {
+      width: 1px;
+      background: #1e3322;
+      height: 32px;
+      align-self: center;
+    }
+
+    .chart-section {
+      width: 100%;
+    }
+
+    .bar-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+      cursor: default;
+      transition: opacity 0.2s;
+    }
+
+    .bar-row.dimmed { opacity: 0.3; }
+
+    .label-col {
+      width: 140px;
+      flex-shrink: 0;
+      text-align: right;
+    }
+
+    .company-name {
+      font-size: 0.68rem;
+      color: #9bbfa1;
+      line-height: 1.3;
+      word-break: break-word;
+    }
+
+    .bar-col {
+      flex: 1;
+      position: relative;
+      height: 24px;
+      display: flex;
+      align-items: center;
+    }
+
+    .bar-track {
+      position: absolute;
+      left: 0; top: 50%; transform: translateY(-50%);
+      height: 18px;
+      background: #1a2e1c;
+      border-radius: 3px;
+      width: 100%;
+    }
+
+    .bar-fill {
+      position: absolute;
+      left: 0; top: 50%; transform: translateY(-50%);
+      height: 18px;
+      border-radius: 3px;
+      width: 0;
+      transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .bar-label {
+      position: absolute;
+      right: -4px;
+      font-size: 0.6rem;
+      white-space: nowrap;
+      transform: translateX(100%);
+      padding-left: 4px;
+      opacity: 0.8;
+    }
+
+    .pct-col {
+      width: 32px;
+      flex-shrink: 0;
+      font-size: 0.63rem;
+      color: #5a7a61;
+      text-align: right;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 1.5rem;
+      font-size: 0.62rem;
+      color: #3d5c42;
+      letter-spacing: 0.3px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="embed-container">
+    <header>
+      <h1>Luas Lahan Konsesi 13 Perusahaan</h1>
+      <p>Sumatera Utara — Hektar (Ha)</p>
+    </header>
+
+    <div class="summary-row">
+      <div class="stat">
+        <div class="stat-value" id="stat-total">—</div>
+        <div class="stat-label">Total Ha</div>
+      </div>
+      <div class="divider"></div>
+      <div class="stat">
+        <div class="stat-value">13</div>
+        <div class="stat-label">Perusahaan</div>
+      </div>
+      <div class="divider"></div>
+      <div class="stat">
+        <div class="stat-value" id="stat-avg">—</div>
+        <div class="stat-label">Rata-rata Ha</div>
+      </div>
+    </div>
+
+    <div class="chart-section" id="chart"></div>
+
+    <footer>Data: 13 Perusahaan Konsesi Lahan · Diurutkan dari terluas</footer>
+  </div>
+
+  <script>
+    const rawData = [
+      { nama: "PT Toba Pulp Lestari Tbk.", luas: 167912 },
+      { nama: "PT Anugerah Rimba Makmur", luas: 49629 },
+      { nama: "PT Barumun Raya Padang Langkat", luas: 14800 },
+      { nama: "PT Gunung Raya Utama Timber", luas: 106930 },
+      { nama: "PT Hutan Barumun Perkasa", luas: 11845 },
+      { nama: "PT Multi Sibolga Timber", luas: 28670 },
+      { nama: "PT Teluk Nauli", luas: 83143 },
+      { nama: "PT Panei Lika Sejahtera", luas: 12264 },
+      { nama: "PT Putra Lika Perkasa", luas: 10000 },
+      { nama: "PT Sinar Belantara Indah", luas: 5197 },
+      { nama: "PT Sumatera Riang Lestari", luas: 173971 },
+      { nama: "PT Sumatera Sylva Lestari", luas: 42530 },
+      { nama: "PT Tanaman Industri Lestari Simalungun", luas: 2786 },
+    ].sort((a, b) => b.luas - a.luas);
+
+    const colors = [
+      "#1D9E75", "#378ADD", "#D85A30", "#7F77DD",
+      "#BA7517", "#D4537E", "#639922", "#533AB7",
+      "#E24B4A", "#0F6E56", "#185FA5", "#993C1D", "#3B6D11"
+    ];
+
+    const total = rawData.reduce((s, d) => s + d.luas, 0);
+    const maxLuas = rawData[0].luas;
+
+    function fmt(n) { return n.toLocaleString("id-ID"); }
+    function pct(n) { return ((n / total) * 100).toFixed(1); }
+
+    document.getElementById("stat-total").textContent = fmt(total);
+    document.getElementById("stat-avg").textContent = fmt(Math.round(total / rawData.length));
+
+    const chart = document.getElementById("chart");
+    const rows = [];
+
+    rawData.forEach((d, i) => {
+      const row = document.createElement("div");
+      row.className = "bar-row";
+
+      row.innerHTML = `
+        <div class="label-col">
+          <div class="company-name">${d.nama}</div>
+        </div>
+        <div class="bar-col">
+          <div class="bar-track"></div>
+          <div class="bar-fill" style="background:${colors[i]};" data-width="${(d.luas / maxLuas) * 100}"></div>
+          <div class="bar-label" style="color:${colors[i]};">${fmt(d.luas)} Ha</div>
+        </div>
+        <div class="pct-col">${pct(d.luas)}%</div>
+      `;
+
+      row.addEventListener("mouseenter", () => {
+        rows.forEach((r, j) => { if (j !== i) r.classList.add("dimmed"); });
+      });
+      row.addEventListener("mouseleave", () => {
+        rows.forEach(r => r.classList.remove("dimmed"));
+      });
+
+      chart.appendChild(row);
+      rows.push(row);
+    });
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        document.querySelectorAll(".bar-fill").forEach(el => {
+          el.style.width = el.dataset.width + "%";
+        });
+      });
+    });
+  </script>
+</body>
+</html>
